@@ -202,6 +202,8 @@ struct CaEncoder {
         bool want_archive_digest:1;
         bool want_payload_digest:1;
         bool want_hardlink_digest:1;
+
+        unsigned next_perc;
 };
 
 #define CA_ENCODER_AT_ROOT(e) ((e)->node_idx == 0)
@@ -2131,6 +2133,16 @@ static int ca_encoder_step_node(CaEncoder *e, CaEncoderNode *n) {
                 r = ca_encoder_node_get_payload_size(n, &size);
                 if (r < 0)
                         return r;
+
+                {
+                        uint64_t prog;
+
+                        prog = e->payload_offset * 100.0 / size;
+                        if (prog > e->next_perc) {
+                                log_info("seeding... %u%%", e->next_perc);
+                                e->next_perc += 10;
+                        }
+                }
 
                 if (e->payload_offset >= size) {
                         ca_encoder_enter_state(e, CA_ENCODER_FINALIZE);
