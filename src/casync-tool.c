@@ -1001,8 +1001,8 @@ static int verbose_print_done_extract(CaSync *s) {
         uint64_t nsec = 0, runtime_nsec = 0;
         int r;
 
-        if (!arg_verbose)
-                return 0;
+        //if (!arg_verbose)
+        //        return 0;
 
         r = ca_sync_get_punch_holes_bytes(s, &n_bytes);
         if (!IN_SET(r, -ENODATA, -ENOTTY)) {
